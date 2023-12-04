@@ -1,0 +1,19 @@
+# Local .terraform directories, these need to be downloaded/created/managed by terraform, as it's initialised/running etc. No need to commit them to the repo.
+.terraform
+.terraform.lock.hcl
+.terraform.tfstate.lock.info
+*/terraform.state
+
+# terraform log file
+*/*.log
+
+# terraform plan files - no need to commit plans, these should be prepared with the latest code.
+*/*.tfplan
+
+# Hide these files, they should NOT exist in the online copy of this repository
+id_rsa.*
+accesskey.ps1
+
+# Hide DOCs, project submission needs to be in DOC/TXT format
+*/*.DOC
+*/*.txt
