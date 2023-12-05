@@ -15,5 +15,7 @@ id_rsa.*
 accesskey.ps1
 
 # Hide DOCs, project submission needs to be in DOC/TXT format
-*/*.DOC
+*.doc
+*.txt
+*/*.doc
 */*.txt
