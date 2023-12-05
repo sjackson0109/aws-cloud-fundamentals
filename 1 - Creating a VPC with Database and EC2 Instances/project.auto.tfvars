@@ -86,7 +86,7 @@ project = {
         description = "sg for public endpoints"
         ingress_rules = {
           0 = {
-            source_cidr = ["51.6.187.152/32"] # home wan ip
+            source_cidr = ["/32"] # home wan ip
             protocol    = "tcp"
             from_port   = 0
             to_port     = 22 # ssh
@@ -196,10 +196,10 @@ project = {
         security_group_key = 0 #public
         key_pair_key       = 0 #rsa key
         user_data          = <<EOF
-    #!/bin/bash
-    echo "STARTUP SCRIPT:"
-    pip install dbus-python -y
-    EOF
+        #!/bin/bash
+        echo 'STARTUP SCRIPT
+        pip install dbus-python -y
+        EOF
       }
     }
     rds = {
@@ -232,7 +232,7 @@ project = {
           engine_version      = "5.7.44"
           instance_class      = "db.t3.micro"
           username            = "rds_user"
-          password            = "fcWeWBWDFARc3Eqx7dswY2R7"
+          password            = "fcWeWBWDFARc3Eqx7dswY2R7" #not insecure, private ip, and this lab is only alive for 8 hours.
           parameter_group_key = 0
           storage_encrypted   = true
           skip_final_snapshot = true

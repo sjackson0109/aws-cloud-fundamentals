@@ -153,8 +153,9 @@ resource "aws_db_parameter_group" "params" {
   tags = try(each.value.tags, var.project.tags)
 
 }
-# resource "aws_iam_instance_profile" "AWSRDSCustomInstanceProfile" {
 
+# MIGHT NEED THIS RESOURCE IN THE NEXT PROJECT SUBMISSION
+# resource "aws_iam_instance_profile" "AWSRDSCustomInstanceProfile" {
 # jsonencode(
 # {
 #     "Version": "2012-10-17",
@@ -208,7 +209,6 @@ resource "tls_private_key" "rsa" {
 resource "aws_key_pair" "rsa" {
   for_each   = var.project.compute.key_pairs
   key_name   = each.value.key_name
-  #public_key = replace(replace(replace(file("${each.value.public_key_filename}"),"-----BEGIN RSA PUBLIC KEY-----","ssh-rsa "),"-----END RSA PUBLIC KEY-----"," ${each.value.key_name}"),"\n","")
   public_key = "${tls_private_key.rsa[each.key].public_key_openssh}"
 
   # NOTE: SAVE THE PRIVATE AND PUBLIC KEYS TO DISK, BY WRITING THEM OUT TO FILES. Terraform output won't work, sensitive data.
