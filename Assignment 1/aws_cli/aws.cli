@@ -1,31 +1,52 @@
+# Create a VPC
 aws ec2 create-vpc --cidr-block 10.99.0.0/16 --tags Key=Name,Value=myvpc
+#Retrieve the VPCID
+aws ec2 describe-vpcs --query 'Vpcs[?Tags[?Key==`Name`]|[?Value==`myvpc`]].VpcId' --output json
+# Manually copy the VPCID, into the `<vpc-id>` values below 
 
-aws ec2 create-internet-gateway --tags Key=Name,Value=myigw
-
-aws ec2 allocate-address --domain vpc
-aws ec2 create-nat-gateway --subnet-id <public-subnet-id> --allocation-id <elastic-ip-address-id>
-
+# Create subnets inside the VPC
 aws ec2 create-subnet --vpc-id <vpc-id> --cidr-block 10.99.0.0/24 --tags Key=Name,Value=public
-
 aws ec2 create-subnet --vpc-id <vpc-id> --cidr-block 10.99.1.0/24 --tags Key=Name,Value=private1
-
 aws ec2 create-subnet --vpc-id <vpc-id> --cidr-block 10.99.2.0/24 --tags Key=Name,Value=private2
 
+# Create an internet gateway (router) as it's required for EIP assignment
+aws ec2 create-internet-gateway --allocation-id <vpc-id> --tags Key=Name,Value=myigw
 
+# Allocate an Elastic IP
+aws ec2 allocate-address --domain vpc --tags Key=Name,Value=myeip
+# Retrieve the EIP details
+aws ec2 describe-addresses --filters 'Name=domain,Value=myeip --output json
+# Manually copy the AllocationID, into the `<elastic-ip-address-id>` values below 
+# Create a NAT Gateway, for outbound IPv4 NAT'ing
+aws ec2 create-nat-gateway --subnet-id <public-subnet-id> --allocation-id <elastic-ip-address-id>
+
+# Create a route table for public traffic, add in the default route to the internet gateway 
 aws ec2 create-route-table --vpc-id <vpc-id> --tags Key=Name,Value=public
 aws ec2 create-route --route-table-id <public-route-table-id> --destination-cidr-block 0.0.0.0/0 --gateway-id <internet-gateway-id>
 
+# Create a second route table for private traffic, default propagaion settings will include all VPC subnets.
 aws ec2 create-route-table --vpc-id <vpc-id> --tags Key=Name,Value=private
-# no routes required to add to private; propagated routes from the subnet/vpc should be sufficient
 
+# Create a security group for the public facing EC2 instance
+aws ec2 create-security-group --group-name public --description "sg for public endpoints" --vpc-id <vpc-id>  --tags Key=Name,Value=public
+aws ec2 authorize-security-group-ingress --group-id <security-group-id> --protocol tcp --port 22 --cidr 8.8.8.8/32 #replace 8.8.8.8 with your home WAN IP
+aws ec2 authorize-security-group-ingress --group-id <security-group-id> --protocol tcp --port 80 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-ingress --group-id <security-group-id> --protocol tcp --port 443 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-egress --group-id <security-group-id> --protocol all --port 53 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-egress --group-id <security-group-id> --protocol udp --port 123 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-egress --group-id <security-group-id> --protocol tcp --port 80 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-egress --group-id <security-group-id> --protocol tcp --port 443 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-egress --group-id <security-group-id> --protocol tcp --port 3306 --cidr 10.99.1.0/23
 
-# Security Groups ##TBD
-# SG FW Rules ##TBD
+# Create another security group for the private facing RDS DB instance
+aws ec2 create-security-group --group-name private --description "sg for private endpoints" --vpc-id <vpc-id> --tags Key=Name,Value=private
+aws ec2 authorize-security-group-ingress --group-id <security-group-id> --protocol tcp --port 3306 --cidr 10.99.1.0/23
 
+# Create a public+private RSA key pair, save the private key to a file
 aws ec2 create-key-pair --key-name simon.jackson --query 'KeyMaterial' --output text | out-file -encoding ascii -filepath aws.rsa.key
 
-
+# Create your own EC2 instance, attached to the given subnet, security group and rsa key for auth
 aws ec2 run-instances --image-id ami-0230bd60aa48260c6 --instance-type t2.micro --count 1 --subnet-id <public-subnet-id> --security-group-ids <security-group-id> --associate-public-ip-address --key-name simon.jackson --tags Key=Name,Value=myec2
-# Associate Elastic IP with EC2 Instance
 
-# Create RDS Database
+# Create the RDS DB Instance
+aws ec2 create-db-instance --db-name mydb --db-instance-identifier rdsinstance --db-instance-class db.t3.micro --engine mysql --engine-version 5.7.44 --db-security-groups <security-group-id> --master-username rds_user --master-user-password fcWeWBWDFARc3Eqx7dswY2R7 
