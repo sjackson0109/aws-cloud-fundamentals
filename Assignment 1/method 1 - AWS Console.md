@@ -1,31 +1,4 @@
-## Preface
-
-Author: Simon Jackson (sjackson0109)
-
-Date: 04/12/2023
-
-## Objective
-To design and construct an Amazon Virtual Private Cloud (VPC) architecture that includes an EC2 instance within a public subnet and a database instance within *two* private subnets.
-
-## Expected Solution
-- As a cloud architect, your objective is to assist James in developing an AWS VPC that hosts both an EC2 instance and a database instance.
-- The EC2 instance, serving the web application, should be placed in a public subnet, while the DB instance should be secured in a private subnet
-- You are expected to provide `step-by-step instructions`` for creating and configuring these AWS resources, ensuring system security, reliability, and accessibility.
-
-
-## Questions
-- What form of service layer are we consuming? IaaS, PaaS, SaaS etc?
- <br> `VPCs` and `EC2` instances both as *IaaS* services
- <br> `RDS` is a *SaaS* service
-- Do we need custom ip routing?
- <br> Yes. Public Subnet will receive `0.0.0.0/0` propagated from the Internet Gateway appliance; whilst the two `Private` tagged subnets, will not require any custom routes configuring. Route Propagation will not affect the private routes.  
-- What kind of Network Firewall functionality will be required? Assuming (without a company rep to discuss compliance requirements with) that the AWS Security Groups acting as a layer 5 firewall will be sufficient.
- <br> WEB = http/s
- <br> SSH from WAN IP Address
- <br> DB = mysql (tcp/3306), allow ICMP for testing
-
-
-## Step-by-step Instructions (GUI)
+## Step-by-step Instructions (AWS Console/GUI)
 1. Create a VPC
  <br> Login to the AWS Management Console
  <br> Search `VPC` and select VPC from the Services dropdown
@@ -96,22 +69,3 @@ To design and construct an Amazon Virtual Private Cloud (VPC) architecture that 
  <br> Search `RDS` and select RDS from the Services dropdown
  <br> Select the `Create database` button, choose `Standard create`, and select `MySQL`, choose `community edition`, with engine version `5.7.44`. Select the `free tier` template. Under Settings set db instance identifier to `rdsinstance`, admin username to `rds_user` and  password set to `fcWeWBWDFARc3Eqx7dswY2R7`. Under Instance configuration choose `db.t3.micro`. Under Connectivity `do not connect` an ec2 compute resource. Leave network-type as IPv4. Replace the VPC with `myvpc`, and `create new db subnet group`, with public access OFF, select the VPC secrurity group called `private`. Leave CA as default, and password authentication as default. Click `Create database`.
  <br> Note: in my first attempt, i had to circle back to create a second private subnet, as the DB subnet group requires subnets in at least 2x availability zones.
-
-
-
-## Step-by-step Instructions (terraform)
-1. Download this repository to your local workstation
-2. Install terraform
-3. Install AWS CLI
-4. Begin your lab, login via web browser to aws console. Create IAM user access key, place data in a post-it/notepad
-5. Authenticate AWS CLI for the first-time, using `aws configure` to check the authentication details work.
-6. Launch a BASH or PowerShell terminal. and set 3x variables:
- <br> - $env:AWS_ACCESS_KEY_ID="<KEY-GOES-HERE>"
- <br> - $env:AWS_SECRET_ACCESS_KEY="<SECRET-VALUE-GOES-HERE>"
- <br> - $env:AWS_REGION="us-east-1"
- 
-7. Initialise Terraform using `terraform init`
-8. Plan for the buildout, using `terraform plan`. The following output should be visible:
-```Plan: 19 to add, 0 to change, 0 to destroy.```
-9. Apply all changes using `terraform apply -auto-approve`. The following output should be visible:
-```Apply complete! Resources: 19 added, 0 changed, 0 destroyed.```

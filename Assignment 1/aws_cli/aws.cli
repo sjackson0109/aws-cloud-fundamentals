@@ -1,0 +1,31 @@
+aws ec2 create-vpc --cidr-block 10.99.0.0/16 --tags Key=Name,Value=myvpc
+
+aws ec2 create-internet-gateway --tags Key=Name,Value=myigw
+
+aws ec2 allocate-address --domain vpc
+aws ec2 create-nat-gateway --subnet-id <public-subnet-id> --allocation-id <elastic-ip-address-id>
+
+aws ec2 create-subnet --vpc-id <vpc-id> --cidr-block 10.99.0.0/24 --tags Key=Name,Value=public
+
+aws ec2 create-subnet --vpc-id <vpc-id> --cidr-block 10.99.1.0/24 --tags Key=Name,Value=private1
+
+aws ec2 create-subnet --vpc-id <vpc-id> --cidr-block 10.99.2.0/24 --tags Key=Name,Value=private2
+
+
+aws ec2 create-route-table --vpc-id <vpc-id> --tags Key=Name,Value=public
+aws ec2 create-route --route-table-id <public-route-table-id> --destination-cidr-block 0.0.0.0/0 --gateway-id <internet-gateway-id>
+
+aws ec2 create-route-table --vpc-id <vpc-id> --tags Key=Name,Value=private
+# no routes required to add to private; propagated routes from the subnet/vpc should be sufficient
+
+
+# Security Groups ##TBD
+# SG FW Rules ##TBD
+
+aws ec2 create-key-pair --key-name simon.jackson --query 'KeyMaterial' --output text | out-file -encoding ascii -filepath aws.rsa.key
+
+
+aws ec2 run-instances --image-id ami-0230bd60aa48260c6 --instance-type t2.micro --count 1 --subnet-id <public-subnet-id> --security-group-ids <security-group-id> --associate-public-ip-address --key-name simon.jackson --tags Key=Name,Value=myec2
+# Associate Elastic IP with EC2 Instance
+
+# Create RDS Database

@@ -1,28 +1,6 @@
-# Prepare terraform provider downloaded packages
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-  }
-}
-
-# Initialise the providers
-provider "aws" {
-  # Hard coded credentials is a bad practice. USING EXPORT or $ENV: variables instead.
-}
-
-# Declare a single variable for your project
-# Note: no need to be specific with data types
-variable "project" {
-  default = {}
-}
-
-
-
-# NETWORKING RELATED RESOURCES
-
+##################################
+#          NETWORKING            #
+##################################
 # VPCs
 resource "aws_vpc" "networks" {
   for_each             = var.project.networking.vpcs
@@ -125,8 +103,11 @@ resource "aws_eip" "eip" {
   depends_on = [aws_instance.ec2, aws_internet_gateway.igws]
 }
 
+##################################
+#             COMPUTE            #
+##################################
 
-
+# Prepare a set of subnets for RDS association
 resource "aws_db_subnet_group" "subnet_groups" {
   for_each = var.project.compute.rds.subnet_groups
   ##subnet_ids = [aws_subnet.subnets["${each.value.vpc_key}-${each.value.subnet_key}"].id]
@@ -139,6 +120,7 @@ resource "aws_db_subnet_group" "subnet_groups" {
 
 }
 
+# Specify parameters that belong inside the RDS DB Params Group
 resource "aws_db_parameter_group" "params" {
   for_each = var.project.compute.rds.parameter_groups
   name     = replace(each.value.name, ".", "-")
@@ -154,26 +136,7 @@ resource "aws_db_parameter_group" "params" {
 
 }
 
-# MIGHT NEED THIS RESOURCE IN THE NEXT PROJECT SUBMISSION
-# resource "aws_iam_instance_profile" "AWSRDSCustomInstanceProfile" {
-# jsonencode(
-# {
-#     "Version": "2012-10-17",
-#     "Statement": [
-#         {
-#             "Effect": "Allow",
-#             "Action": [
-#                 "rds-db:connect"
-#             ],
-#             "Resource": [
-#                 "arn:aws:rds-db:us-east-2:1234567890:dbuser:db-ABCDEFGHIJKL01234/db_user"
-#              S3 and RDS Full Access
-#             ]
-#         }
-#     ]
-# }
-# )
-
+# Create the RDS Instance (this is effectively an EC2 Instance IE `Managed Appliance`)
 resource "aws_db_instance" "rds" {
   for_each                   = var.project.compute.rds.instances
   allocated_storage          = try(each.value.allocated_storage, 50)
@@ -204,7 +167,6 @@ resource "tls_private_key" "rsa" {
   rsa_bits  = each.value.rsa_bits
 }
 
-
 # Export the OpenSSH formatted public key
 resource "aws_key_pair" "rsa" {
   for_each   = var.project.compute.key_pairs
@@ -222,6 +184,7 @@ resource "aws_key_pair" "rsa" {
   }
 }
 
+# Create the EC2 Instance to host the web-frontend on
 resource "aws_instance" "ec2" {
   for_each               = var.project.compute.ec2
   ami                    = try(each.value.ami, "ami-04e914639d0cca79a")
@@ -233,7 +196,7 @@ resource "aws_instance" "ec2" {
   tags                   = try(each.value.tags, var.project.tags)
 }
 
-
+# Test the RSA key works by SSH'ing to the EC2 Instance
 resource "null_resource" "test-rsa-key" {
   for_each = var.project.compute.key_pairs
   connection {
