@@ -1,5 +1,5 @@
 # Course: aws-cloud-fundamentals
-This repository stores terraform code for building the AWS labs, for the given project.
+This repository stores course write-ups for building the AWS labs assignments, on the AWS Cloud Fundamentals course.
 
 # Assignment
 The assignment is relatively simple; build a VPC, with an RDS Database, with an EC2 Instance.
