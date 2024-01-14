@@ -42,10 +42,13 @@ Note: I had to do this a couple of times as the lab is only available for 8-hour
 
 This installation registers the PATH parameter in windows, so re-launch your command line. and then configure the product using:
 > aws configure
+
 Enter the following parameters:
+```
 $env:AWS_ACCESS_KEY_ID="{REDACTED}"
 $env:AWS_SECRET_ACCESS_KEY="{REDACTED}"
 $env:AWS_REGION="us-east-1"
+```
 
 ## Preparing Terraform
 `Terraform` can be downloaded from [here](https://developer.hashicorp.com/terraform/downloads), select the operating system and follow the relevant installation instructions.  I'm using Windows, so simply download the ZIP, and extracted it to `C:\Program Files\Hashicorp\Terraform`.
