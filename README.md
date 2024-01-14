@@ -1,14 +1,28 @@
 # Course: aws-cloud-fundamentals
 This repository stores course write-ups for building the AWS labs assignments, on the AWS Cloud Fundamentals course.
 
-# Assignment
-The assignment is relatively simple; build a VPC, with an RDS Database, with an EC2 Instance.
-Specifics can be found in the Assignment PDF located [here](./Assignment%201%20-%20Creating%20a%20VPC%20with%20Database%20and%20EC2%20Instances.pdf)
+# Classroom
+Between 25/11/2023 and 09/12/2023 this course was taught via remote classrooms (Zoom) over 4-hour intervals, the course lasted a total of 24 hours, typically over a weekend.
+Each Lesson was presented by our SimpliLearn trainer. On the course we covered the agenda of:
+| Lesson | Title |
+|---|---|
+| 1 | Course Introduction |
+| 2 | Introduction to Amazon Web Services |
+| 3 | AWS Compute |
+| 4 | AWS Networking |
+| 5 | AWS Storage |
+| 6 | AWS Databases |
+| 7 | AWS Monitoring and Optimisation, and Serverless Architecture |
+| 8 | AWS Security and Account Management |
 
-## Accessing AWS Console
-During the SimpliLearn Course we were presented the opportunity to create an AWS practice lab, powered by [CloudLabs](https://cloudlabs.ai/). These labs gives an 8-hour window to build anything we want (within quota limits and approved regions).
+At the end of each lesson, we all had lab-activities to perform, sometimes 3-4 per-lesson, each to be completed within our own time. 
 
-We can simply start the practice lab, and then we will be presented with a login URL, iam_username and iam_password: EG:
+Towards the end, we were given two project items, although only one was able to be submitted passing the course automatically via the Simplilearn LMS portal. 
+
+## Access to AWS Labs
+During the SimpliLearn Course we were given the opportunity to `create an AWS practice lab`, powered by [CloudLabs](https://cloudlabs.ai/). Starting one of these labs provides an `8-hour window` within which we can build/deploy/test almost anything, as long as we stick within the default region. We later found out this is also within the course-providers quota limits and approved regions.
+
+We can simply start the practice lab, and then we will be presented with a login URL, iam_username and iam_password.  EG:
 ![Simplilearn AWS Premium LAB Access](lab_creds.png)
 
 You can reach the AWS console here: https://console.aws.com
@@ -18,7 +32,7 @@ Login to the AWS Management Console (GUI)
 Navigate to the AMI section
 Select your current user
 Select `create access key`, select command line, click accept to the agreement, and click save
-Click the reveal icon to view the secret value. Save these credentials for later us
+Click the reveal icon to view the secret value. Save these credentials for later use
 
 Note: I had to do this a couple of times as the lab is only available for 8-hours.
 
@@ -39,9 +53,9 @@ I also updated the PATH variable in windows to reflect the installation path of 
 
 Terraform typically has a state file that we should save on a shared-aread, to be accessible by multiple people/services. For this course, this is not necessary, a local state-file, with no additional configuration, is all that is required.
 
-## Assignments
-Tackling each of the assignments as their own distinct set of objectives/challanges; the folder structure in this repository represents each assignment. There is also a PDF extract off the course-downloadable-content, which gives all the details needed to start designing/building on AWS.
-|No | Name | Brief | Writeup |
+## Projects
+Tackling each of the assignments (mini-projects with real-world applicability) as their own distinct set of objectives/challanges; the folder structure in this repository represents each assignment. There is also a PDF extract off the course-downloadable-content, which gives all the details needed to start designing/building on AWS.
+|Project | Name | Brief | Writeup |
 |---|---|---|---|
-|Assignment 0|Create a Static Website in an S3 Bucket with Public Access Policies|[Brief](Assignment%201%20-%20Creating%20a%20VPC%20with%20RDS%20DB%20and%20an%20EC2%20Instance.pdf)|[Readme](./Assignment%200/README.md)
-|Assignment 1|Creating a VPC with RDS DB and an EC2 Instance|[Brief](Assignment%201%20-%20Creating%20a%20VPC%20with%20RDS%20DB%20and%20an%20EC2%20Instance.pdf)|[Readme](./Assignment%201/README.md)
+| 0|Create a Static Website in an S3 Bucket with Public Access Policies|[Brief](Project%201%20-%20Creating%20a%20VPC%20with%20RDS%20DB%20and%20an%20EC2%20Instance.pdf)|[Readme](./Project%200/README.md)
+| 1|Creating a VPC with RDS DB and an EC2 Instance|[Brief](Project%201%20-%20Creating%20a%20VPC%20with%20RDS%20DB%20and%20an%20EC2%20Instance.pdf)|[Readme](./Project%201/README.md)
