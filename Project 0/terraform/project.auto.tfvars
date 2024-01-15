@@ -1,7 +1,8 @@
 project = {
   tags = {
     owner   = "Simon Jackson"
-    project = "AWS Cloud Fundamentals"
+    course = "AWS Cloud Fundamentals"
+    project = "deploy static website on an s3 bucket"
   }
   iam = {
     roles = {

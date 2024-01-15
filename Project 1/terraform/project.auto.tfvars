@@ -1,7 +1,8 @@
 project = {
   tags = {
     owner   = "Simon Jackson"
-    project = "AWS Cloud Fundamentals"
+    course = "AWS Cloud Fundamentals"
+    project = "Create a VPC, with multiple subnets, Internet Gateway, Security Groups and a backend RDS database instance to host a website"
   }
   networking = {
     vpcs = {
